@@ -1,0 +1,30 @@
+---
+- name: Deploy Fahrtenbuch
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install NGINX (Reverse Proxy)
+      apt:
+        name: nginx
+        state: present
+      when: "'web' in group_names"
+
+    - name: Install Java
+      apt:
+        name: openjdk-11-jdk
+        state: present
+      when: "'app' in group_names"
+
+    - name: Clone Fahrtenbuch Repository
+      git:
+        repo: https://mygit.th-deg.de/sp22329/bootfahrten.git
+        dest: /opt/fahrtenbuch
+      when: "'web' in group_names or 'app' in group_names"
+
+  handlers:
+    - name: Restart NGINX
+      service:
+        name: nginx
+        state: restarted
+      when: "'web' in group_names"
