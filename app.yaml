@@ -1,0 +1,34 @@
+---
+- name: Deploy local repository and install Java and service watcher
+  hosts: app_instance
+  become: true
+
+  tasks:
+    - name: Install Java JDK 11
+      package:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Install service watcher from Ansible Galaxy
+      include_role:
+       name: 0x0i.systemd
+    
+    - name: Install Maven
+      shell: wget https://dlcdn.apache.org/maven/maven-3/3.9.2/binaries/apache-maven-3.9.2-bin.tar.gz
+
+    - name: Unzip Installation
+      shell: tar xzvf apache-maven-3.9.2-bin.tar.gz
+
+    - name: Set Maven Path
+      shell: export PATH=/opt/maven/bin:$PATH
+
+    - name: Copy local repository to app_instance
+    copy:
+      src: bootfahrten/
+      dest: /tmp/bootfahrten
+
+    - name: Change directory to local repository
+      shell: cd /tmp/bootfahrten
+
+    - name: Run 'mvnw spring-boot:run' command
+      shell: sudo mvnw spring-boot:run

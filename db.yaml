@@ -1,0 +1,19 @@
+- name: Install MariaDB
+  hosts: db_instance
+  become: yes
+
+  tasks:
+  # Installiere MariaDb von Ansible Galaxy
+    - name: Install MariaDB
+      include_role:
+        name: fauust.mariadb
+  # Setze Root Nutzer und ein Passwort
+    - name: Set MariaDB root password
+      mysql_user:
+        name: root
+        password: "e3D!ZrMtn585"
+        host: localhost
+        login_user: root
+        login_password: "e3D!ZrMtn585"
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        update_password: always
